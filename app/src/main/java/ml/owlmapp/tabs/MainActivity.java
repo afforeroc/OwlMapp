@@ -20,10 +20,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         fragmentManager = getSupportFragmentManager();
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        String tabTitles[] = new String[] { "EVENTOS", "MAPA", "LUGARES", };
+        String tabTitles[] = new String[]{"EVENTOS", "MAPA", "LUGARES",};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);

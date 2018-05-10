@@ -1,22 +1,26 @@
 package ml.owlmapp.tabs;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Modules.TwitterConnection;
+import ml.owlmapp.adapters.EventsAdapter;
+import ml.owlmapp.models.Event;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterAdapter;
@@ -25,21 +29,13 @@ import twitter4j.TwitterMethod;
 
 public class EventsFragment extends Fragment {
 
-    private ListView list_view;
-    private ArrayList<String> array = new ArrayList<String>();
-
-    public EventsFragment() {
-        // Required empty public constructor
-    }
+    private RecyclerView rclEvents;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_events, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_events, container, false);
+        rclEvents = view.findViewById(R.id.rclEvents);
 
-
-
-        //setContentView(R.layout.fragment_events);
         TwitterConnection.getInstance().getTimelineFeedInBackground(new TwitterAdapter() {
 
             @Override
@@ -49,64 +45,54 @@ public class EventsFragment extends Fragment {
 
             @Override
             public void onException(TwitterException e, TwitterMethod method) {
-                Log.e("TwitterException", Integer.toString(e.getErrorCode()) + " :: "
-                        + e.getErrorMessage());
+                Snackbar.make(view, "No pudimos conectarnos a Twitter. Revisa tu conexión de internet.", Snackbar.LENGTH_LONG).show();
             }
         });
 
         return view;
     }
 
-    public void showTimeLine(ResponseList < Status > statuses) {
+    public void showTimeLine(ResponseList<Status> statuses) {
+        List<Event> events = new ArrayList<>();
 
-        list_view = (ListView) getView().findViewById(R.id.listView);
-        array = new ArrayList<String>();
-
-        int id=0;
-        for (Status  st : statuses) {
-            Log.d("TIMELINE" + String.valueOf(id), st.getText());
-            ++id;
-            array.add( st.getText() );
+        for (Status st : statuses) {
+            Event event = new Event();
+            event.setDescription(st.getText());
+            event.setUrl(obtainUrl(st.getText()));
+            events.add(event);
         }
-        final Context context = getContext();
 
-        ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, array);
-                list_view.setAdapter(adapter);
-
-                View progressBar = getView().findViewById(R.id.progressBar);
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-
-        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String text = (String) parent.getItemAtPosition(position);
-                String url = obtainUrl(text);
+        final EventsAdapter eventsAdapter = new EventsAdapter(EventsFragment.this.getActivity(), events, new EventsAdapter.OnItemClickListener() {
+            public void onItemClick(Event event, Context context) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse(event.getUrl()));
                 startActivity(i);
             }
         });
 
+        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(EventsFragment.this.getActivity());
+
+        EventsFragment.this.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                rclEvents.setLayoutManager(mLayoutManager);
+                rclEvents.setAdapter(eventsAdapter);
+            }
+        });
     }
 
-
-    public static String obtainUrl(String text){
+    public String obtainUrl(String text) {
         String url = "";
-
-        int i = text.indexOf("https");
-        char aChar;
-        while(i<text.length()){
-            aChar = text.charAt(i);
-            if(aChar == ' ') break;
-            url += aChar;
-            i++;
+        int i = text.indexOf("https://t.co/");
+        while (i < text.length()) {
+            if (text.charAt(i) != ' ') {
+                url += text.charAt(i);
+                i++;
+            } else {
+                break;
+            }
         }
         return url;
     }
-
 }
