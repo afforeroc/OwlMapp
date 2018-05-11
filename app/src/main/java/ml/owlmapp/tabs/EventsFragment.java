@@ -1,6 +1,5 @@
 package ml.owlmapp.tabs;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,12 +7,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,12 +58,10 @@ public class EventsFragment extends Fragment {
             events.add(event);
         }
 
-        final EventsAdapter eventsAdapter = new EventsAdapter(EventsFragment.this.getActivity(), events, new EventsAdapter.OnItemClickListener() {
-            public void onItemClick(Event event, Context context) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(event.getUrl()));
-                startActivity(i);
-            }
+        final EventsAdapter eventsAdapter = new EventsAdapter(EventsFragment.this.getActivity(), events, (event, context) -> {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(event.getUrl()));
+            startActivity(i);
         });
 
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(EventsFragment.this.getActivity());
