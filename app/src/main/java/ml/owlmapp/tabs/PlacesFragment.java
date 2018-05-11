@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 public class PlacesFragment extends Fragment {
 
-    private HashMap map = new HashMap();
+    private HashMap<String, Building> map = new HashMap<String, Building>();
     private SearchView mSearchView;
     private ListView mListView;
     private ArrayAdapter<String> mAdapter;
@@ -35,11 +35,11 @@ public class PlacesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_places, container, false);
 
         buildingsMap();
-        mSearchView = (SearchView) view.findViewById(R.id.searchView);
-        mTextView = (TextView) view.findViewById(R.id.textView);
-        mTextView2 = (TextView) view.findViewById(R.id.textView2);
-        mListView = (ListView) view.findViewById(R.id.listView);
-        mImage = (ImageView) view.findViewById(R.id.imageView);
+        mSearchView = view.findViewById(R.id.searchView);
+        mTextView = view.findViewById(R.id.textView);
+        mTextView2 = view.findViewById(R.id.textView2);
+        mListView = view.findViewById(R.id.listView);
+        mImage = view.findViewById(R.id.imageView);
         mListView.setAdapter(mAdapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, sCheeseStrings));
         mListView.setTextFilterEnabled(true);
@@ -69,12 +69,12 @@ public class PlacesFragment extends Fragment {
                 mListView.setVisibility(View.INVISIBLE);
                 mSearchView.setQuery((CharSequence) listItem, true);
                 String building = listItem.toString();
-                Building b = (Building) map.get(building);
+                Building b = map.get(building);
                 mImage.setImageResource(b.getImage());
                 mTextView.setText(b.getInfo());
                 mTextView2.setText(building);
                 mTextView.setVisibility(View.VISIBLE);
-                mTextView2.setVisibility(View.VISIBLE);;
+                mTextView2.setVisibility(View.VISIBLE);
                 mImage.setVisibility(View.VISIBLE);
             }
         });

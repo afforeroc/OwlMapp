@@ -39,7 +39,6 @@ import java.util.List;
 import Modules.DirectionFinder;
 import Modules.DirectionFinderListener;
 import Modules.Route;
-import ml.owlmapp.tabs.R;
 
 import static java.lang.Math.floor;
 import static java.lang.Math.pow;
@@ -76,16 +75,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         sNomPlaces = getResources().getStringArray(R.array.unLugares);
-        ArrayAdapter<String> adapterPlaces = new ArrayAdapter<String>(getContext(),
+        ArrayAdapter<String> adapterPlaces = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, sNomPlaces);
 
-        actvOrigin = (AutoCompleteTextView)view.findViewById(R.id.actvOrigin);
+        actvOrigin = view.findViewById(R.id.actvOrigin);
         actvOrigin.setAdapter(adapterPlaces);
 
-        actvDestination = (AutoCompleteTextView)view.findViewById(R.id.actvDestination);
+        actvDestination = view.findViewById(R.id.actvDestination);
         actvDestination.setAdapter(adapterPlaces);
 
-        bTypeMap = (Button) view.findViewById(R.id.MapType);
+        bTypeMap = view.findViewById(R.id.MapType);
 
         return view;
     }
@@ -100,37 +99,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         listNomPlaces = Arrays.asList(sNomPlaces);
         addAllLatLng();
 
-        bTypeMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeType(v);
-            }
-        });
-        
-        actvOrigin.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String sPlace = (String) parent.getItemAtPosition(position);
-                LatLngPosA = setLatLng(sPlace);
-                markerPosA = setMarker(markerPosA, LatLngPosA, 0, sPlace);
-                sendRequest();
-                hideSoftKeyBoard(getActivity());
-                actvOrigin.setText("");
-                actvOrigin.setHint(sPlace);
-            }
+        bTypeMap.setOnClickListener(v -> changeType(v));
+
+        actvOrigin.setOnItemClickListener((parent, view, position, id) -> {
+            String sPlace = (String) parent.getItemAtPosition(position);
+            LatLngPosA = setLatLng(sPlace);
+            markerPosA = setMarker(markerPosA, LatLngPosA, 0, sPlace);
+            sendRequest();
+            hideSoftKeyBoard(getActivity());
+            actvOrigin.setText("");
+            actvOrigin.setHint(sPlace);
         });
 
-        actvDestination.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String sPlace = (String) parent.getItemAtPosition(position);
-                LatLngPosB = setLatLng(sPlace);
-                markerPosB = setMarker(markerPosB, LatLngPosB, 1, sPlace);
-                sendRequest();
-                hideSoftKeyBoard(getActivity());
-                actvDestination.setText("");
-                actvDestination.setHint(sPlace);
-            }
+        actvDestination.setOnItemClickListener((parent, view, position, id) -> {
+            String sPlace = (String) parent.getItemAtPosition(position);
+            LatLngPosB = setLatLng(sPlace);
+            markerPosB = setMarker(markerPosB, LatLngPosB, 1, sPlace);
+            sendRequest();
+            hideSoftKeyBoard(getActivity());
+            actvDestination.setText("");
+            actvDestination.setHint(sPlace);
         });
 
     }
@@ -147,8 +135,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
@@ -162,58 +150,50 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
 
     }
 
-    public void changeType(View view)
-    {
-        if(mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL)
-        {
+    public void changeType(View view) {
+        if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        }
-        else
+        } else
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 
-    public LatLng setLatLng(String sPlace){
+    public LatLng setLatLng(String sPlace) {
         int index = listNomPlaces.indexOf(sPlace);
         LatLng vLatLng = listLatLngPlaces.get(index);
         return vLatLng;
     }
 
-    public double distance(){
+    public double distance() {
         double lon1 = LatLngPosA.longitude;
         double lon2 = LatLngPosB.longitude;
         double lat1 = LatLngPosA.latitude;
         double lat2 = LatLngPosB.latitude;
-        double x = 110.56*(lat2 - lat1);
-        double y = 84.8*(lon2 - lon1);
-        double d = sqrt(pow(x,2)+pow(y,2))*1000;
+        double x = 110.56 * (lat2 - lat1);
+        double y = 84.8 * (lon2 - lon1);
+        double d = sqrt(pow(x, 2) + pow(y, 2)) * 1000;
         d = floor(d * 100) / 100;
         return d;
     }
 
-    public void setMidPoint(){
+    public void setMidPoint() {
         double latC;
         double lngC;
         double d = distance();
-        if(LatLngPosA != null && LatLngPosB != null){
-            latC = (LatLngPosA.latitude + LatLngPosB.latitude)/2;
-            lngC = (LatLngPosA.longitude + LatLngPosB.longitude)/2;
-            LatLngMidPoint  = new LatLng(latC, lngC);
+        if (LatLngPosA != null && LatLngPosB != null) {
+            latC = (LatLngPosA.latitude + LatLngPosB.latitude) / 2;
+            lngC = (LatLngPosA.longitude + LatLngPosB.longitude) / 2;
+            LatLngMidPoint = new LatLng(latC, lngC);
 
-            if(d > 600){
+            if (d > 600) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 15));
-            }
-            else if(d > 400 && d <= 600){
+            } else if (d > 400 && d <= 600) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 16));
-            }
-            else if (d >= 130 && d <= 400) {
+            } else if (d >= 130 && d <= 400) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 17));
-            }
-            else {
+            } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 18));
             }
-
         }
-
     }
 
     public Marker setMarker(Marker MarkerPosX, LatLng LatLngPosX, int isAB, String sPlace) {
@@ -235,15 +215,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         return vMarker;
     }
 
-    public static void hideSoftKeyBoard(Activity activity){
+    public static void hideSoftKeyBoard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     private void sendRequest() {
-        if (LatLngPosA== null || LatLngPosB== null || LatLngPosA == LatLngPosB) {
+        if (LatLngPosA == null || LatLngPosB == null || LatLngPosA == LatLngPosB) {
             if (polylinePaths != null) {
-                for (Polyline polyline:polylinePaths ) {
+                for (Polyline polyline : polylinePaths) {
                     polyline.remove();
                 }
             }
@@ -264,7 +244,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
                 "Buscando dirección...!", true);
 
         if (polylinePaths != null) {
-            for (Polyline polyline:polylinePaths ) {
+            for (Polyline polyline : polylinePaths) {
                 polyline.remove();
             }
         }
@@ -292,7 +272,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         }
     }
 
-    public void addAllLatLng(){
+    public void addAllLatLng() {
         listLatLngPlaces.add(new LatLng(4.635170, -74.082409));
         listLatLngPlaces.add(new LatLng(4.635326, -74.083205));
         listLatLngPlaces.add(new LatLng(4.634553, -74.082743));
@@ -375,15 +355,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         listLatLngPlaces.add(new LatLng(4.644562, -74.084087)); //80
     }
 
-    GoogleMap.OnInfoWindowClickListener MyOnInfoWindowClickListener
-            = new GoogleMap.OnInfoWindowClickListener(){
-        @Override
-        public void onInfoWindowClick(Marker marker) {
-                Toast.makeText(getActivity(),
-                        marker.getPosition().latitude + ", " + marker.getPosition().longitude,
-                        Toast.LENGTH_LONG).show();
-        }
-    };
-
-
+    GoogleMap.OnInfoWindowClickListener MyOnInfoWindowClickListener = marker -> Toast.makeText(getActivity(),
+            marker.getPosition().latitude + ", " + marker.getPosition().longitude,
+            Toast.LENGTH_LONG).show();
 }
