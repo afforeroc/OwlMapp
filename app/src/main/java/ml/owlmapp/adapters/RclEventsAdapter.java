@@ -16,7 +16,7 @@ import ml.owlmapp.tabs.R;
  * Created by Erick Velasco on 9/5/2018.
  */
 
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
+public class RclEventsAdapter extends RecyclerView.Adapter<RclEventsAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
         void onItemClick(Event mall, Context context);
@@ -26,7 +26,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private final OnItemClickListener listener;
     private final Activity activity;
 
-    public EventsAdapter(Activity activity, List<Event> events, OnItemClickListener listener) {
+    public RclEventsAdapter(Activity activity, List<Event> events, OnItemClickListener listener) {
         this.activity = activity;
         this.listener = listener;
         this.events = events;
@@ -43,8 +43,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     @Override
-    public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = activity.getLayoutInflater().inflate(R.layout.list_item_events, parent, false);
+    public RclEventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = activity.getLayoutInflater().inflate(R.layout.item_rcl_events, parent, false);
         return new ViewHolder(view);
     }
 
@@ -62,7 +62,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             txtDescription = view.findViewById(R.id.txtDescription);
         }
 
-        public void bind(final Event item, final EventsAdapter.OnItemClickListener listener) {
+        public void bind(final Event item, final RclEventsAdapter.OnItemClickListener listener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

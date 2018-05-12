@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Modules.TwitterConnection;
-import ml.owlmapp.adapters.EventsAdapter;
+import ml.owlmapp.adapters.RclEventsAdapter;
 import ml.owlmapp.models.Event;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -58,7 +58,7 @@ public class EventsFragment extends Fragment {
             events.add(event);
         }
 
-        final EventsAdapter eventsAdapter = new EventsAdapter(EventsFragment.this.getActivity(), events, (event, context) -> {
+        final RclEventsAdapter rclEventsAdapter = new RclEventsAdapter(EventsFragment.this.getActivity(), events, (event, context) -> {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(event.getUrl()));
             startActivity(i);
@@ -71,7 +71,7 @@ public class EventsFragment extends Fragment {
             public void run() {
                 getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
                 rclEvents.setLayoutManager(mLayoutManager);
-                rclEvents.setAdapter(eventsAdapter);
+                rclEvents.setAdapter(rclEventsAdapter);
             }
         });
     }
