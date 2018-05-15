@@ -1,4 +1,4 @@
-package ml.owlmapp.adapters;
+package co.com.owlmapp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ml.owlmapp.models.Building;
-import ml.owlmapp.tabs.R;
+import co.com.owlmapp.R;
+import co.com.owlmapp.models.Building;
 
 public class RclBuildingsAdapter extends RecyclerView.Adapter<RclBuildingsAdapter.ViewHolder> {
 

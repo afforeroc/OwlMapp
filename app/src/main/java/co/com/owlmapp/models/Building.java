@@ -1,4 +1,4 @@
-package ml.owlmapp.models;
+package co.com.owlmapp.models;
 
 /**
  * Created by Erick Velasco on 12/5/2018.

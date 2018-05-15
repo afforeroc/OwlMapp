@@ -1,4 +1,4 @@
-package ml.owlmapp.adapters;
+package co.com.owlmapp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ml.owlmapp.models.Event;
-import ml.owlmapp.tabs.R;
+import co.com.owlmapp.R;
+import co.com.owlmapp.models.Event;
 
 /**
  * Created by Erick Velasco on 9/5/2018.

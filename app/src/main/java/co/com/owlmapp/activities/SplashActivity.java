@@ -1,23 +1,14 @@
-package ml.owlmapp.activities;
+package co.com.owlmapp.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import java.util.LinkedList;
-
-import co.com.millennialapps.utils.common.IReceiveDB;
-import co.com.millennialapps.utils.firebase.FDatabaseManager;
-import co.com.millennialapps.utils.sqlite.SQLiteManager;
-import co.com.millennialapps.utils.sqlite.SQLiteTools;
-import co.com.millennialapps.utils.tools.ConnectionManager;
 import co.com.millennialapps.utils.tools.DialogManager;
-import co.com.millennialapps.utils.tools.Preferences;
-import ml.owlmapp.tabs.R;
+import co.com.owlmapp.R;
 
 public class SplashActivity extends AppCompatActivity {
 

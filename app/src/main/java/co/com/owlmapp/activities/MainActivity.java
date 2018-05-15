@@ -1,4 +1,4 @@
-package ml.owlmapp.activities;
+package co.com.owlmapp.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -8,10 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import ml.owlmapp.tabs.EventsFragment;
-import ml.owlmapp.tabs.MapFragment;
-import ml.owlmapp.tabs.PlacesFragment;
-import ml.owlmapp.tabs.R;
+import co.com.owlmapp.R;
+import co.com.owlmapp.tabs.EventsFragment;
+import co.com.owlmapp.tabs.MapFragment;
+import co.com.owlmapp.tabs.PlacesFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        String tabTitles[] = new String[]{"EVENTOS", "MAPA", "LUGARES",};
+        String tabTitles[] = new String[]{"Mapa", "Edificios", "Eventos",};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -48,11 +48,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    return new EventsFragment();
-                case 1:
                     return new MapFragment();
-                default:
+                case 1:
                     return new PlacesFragment();
+                case 2:
+                    return new EventsFragment();
+                default:
+                    return new EventsFragment();
             }
         }
 
