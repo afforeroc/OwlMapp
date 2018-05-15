@@ -9,7 +9,7 @@ android {
         targetSdkVersion 26
         multiDexEnabled true
         versionCode 1
-        versionName "0.51.298"
+        versionName "0.53.700"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -41,7 +41,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:11.6.2'
     implementation 'com.google.android.gms:play-services-places:11.6.2'
 
+    implementation 'com.google.firebase:firebase-auth:11.6.2'
     implementation 'com.google.firebase:firebase-database:11.6.2'
+    implementation 'com.google.firebase:firebase-core:11.6.2'
+    implementation 'com.google.firebase:firebase-storage:11.6.2'
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 

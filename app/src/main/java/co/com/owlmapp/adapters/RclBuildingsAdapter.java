@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import co.com.millennialapps.utils.firebase.FStorageManager;
 import co.com.owlmapp.R;
 import co.com.owlmapp.models.Building;
 
@@ -49,7 +50,8 @@ public class RclBuildingsAdapter extends RecyclerView.Adapter<RclBuildingsAdapte
         holder.bind(buildings.get(position), listener);
         holder.txtName.setText(buildings.get(position).getName());
         holder.txtNumber.setText(buildings.get(position).getNumber());
-        holder.img.setImageResource(buildings.get(position).getImage());
+        FStorageManager.getInstance().downloadImage(activity, holder.img,
+                Building.class.getSimpleName() + "/" + buildings.get(position).getNumber());
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

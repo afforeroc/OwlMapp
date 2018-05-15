@@ -10,10 +10,9 @@ public class Building {
     private String name;
     private String number;
     private String description;
-    private int image;
+    private String urlImage;
 
-    public Building(int image, String description, String name){
-        this.image = image;
+    public Building(String description, String name){
         this.name = name.substring(3);
         this.description = description;
         this.number = name.substring(0, 3);
@@ -51,11 +50,11 @@ public class Building {
         this.description = description;
     }
 
-    public int getImage() {
-        return image;
+    public String getUrlImage() {
+        return urlImage;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setUrlImage(String urlImage) {
+        this.urlImage = urlImage;
     }
 }

@@ -1,17 +1,25 @@
 package co.com.owlmapp.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
+import co.com.millennialapps.utils.firebase.FAuthManager;
 import co.com.owlmapp.R;
 import co.com.owlmapp.tabs.EventsFragment;
 import co.com.owlmapp.tabs.MapFragment;
-import co.com.owlmapp.tabs.PlacesFragment;
+import co.com.owlmapp.tabs.BuildingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +31,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            buildTabs();
+        } else {
+            signInAnonymously();
+        }
+    }
 
+    private void signInAnonymously() {
+        //TODO FAuthManager.getInstance().authAnonymously()
+        FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(this, authResult -> buildTabs()
+        ).addOnFailureListener(this, exception -> Log.e("TAG", "signInAnonymously:FAILURE", exception));
+    }
+
+    private void buildTabs() {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -32,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         fragmentManager = getSupportFragmentManager();
-
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -50,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return new MapFragment();
                 case 1:
-                    return new PlacesFragment();
+                    return new BuildingsFragment();
                 case 2:
                     return new EventsFragment();
                 default:
