@@ -1,4 +1,4 @@
-package co.com.owlmapp.tabs;
+package co.com.owlmapp.fragments;
 
 import android.content.Intent;
 import android.net.Uri;

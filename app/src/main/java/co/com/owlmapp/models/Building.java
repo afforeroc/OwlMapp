@@ -1,5 +1,8 @@
 package co.com.owlmapp.models;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.Exclude;
+
 /**
  * Created by Erick Velasco on 12/5/2018.
  */
@@ -10,13 +13,21 @@ public class Building {
     private String name;
     private String number;
     private String description;
+    private double latitude;
+    private double longitude;
     private String urlImage;
 
-    public Building(String description, String name){
+    public Building(String description, String name) {
         this.name = name.substring(3);
         this.description = description;
         this.number = name.substring(0, 3);
     }
+
+    @Exclude
+    public LatLng getLatLng() {
+        return new LatLng(latitude, longitude);
+    }
+
 
     public String getId() {
         return id;
@@ -56,5 +67,21 @@ public class Building {
 
     public void setUrlImage(String urlImage) {
         this.urlImage = urlImage;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

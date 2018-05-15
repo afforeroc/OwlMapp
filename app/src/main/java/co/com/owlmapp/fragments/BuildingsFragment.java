@@ -1,5 +1,6 @@
-package co.com.owlmapp.tabs;
+package co.com.owlmapp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.google.gson.Gson;
+
 import java.util.LinkedList;
 
 import co.com.owlmapp.R;
+import co.com.owlmapp.activities.BuildDetailActivity;
 import co.com.owlmapp.adapters.RclBuildingsAdapter;
 import co.com.owlmapp.models.Building;
 
@@ -30,12 +34,12 @@ public class BuildingsFragment extends Fragment {
         mSearchView = view.findViewById(R.id.searchView);
         rclBuildings = view.findViewById(R.id.rclBuildings);
         RclBuildingsAdapter adapter = new RclBuildingsAdapter(getActivity(), buildings,
-                (category, context) -> {
-                    /*Bundle bundle = new Bundle();
-                    bundle.putString("id", category.getId());
-                    Intent i = new Intent(context, CategoryDetailActivity.class);
+                (building, context) -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("building", new Gson().toJson(building));
+                    Intent i = new Intent(context, BuildDetailActivity.class);
                     i.putExtras(bundle);
-                    getActivity().startActivity(i);*/
+                    getActivity().startActivity(i);
                 });
 
         RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);

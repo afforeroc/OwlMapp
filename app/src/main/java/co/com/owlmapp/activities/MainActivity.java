@@ -1,7 +1,6 @@
 package co.com.owlmapp.activities;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,16 +9,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import co.com.millennialapps.utils.firebase.FAuthManager;
 import co.com.owlmapp.R;
-import co.com.owlmapp.tabs.EventsFragment;
-import co.com.owlmapp.tabs.MapFragment;
-import co.com.owlmapp.tabs.BuildingsFragment;
+import co.com.owlmapp.fragments.EventsFragment;
+import co.com.owlmapp.fragments.MapFragment;
+import co.com.owlmapp.fragments.BuildingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
