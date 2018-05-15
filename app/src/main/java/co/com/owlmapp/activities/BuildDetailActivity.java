@@ -8,9 +8,11 @@ import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 import com.google.gson.Gson;
 
 import co.com.millennialapps.utils.activities.BaseActivity;
+import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.owlmapp.R;
 import co.com.owlmapp.models.Building;
 
@@ -44,5 +46,13 @@ public class BuildDetailActivity extends BaseActivity implements OnStreetViewPan
     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
         //streetViewPanorama.setPosition(building.getLatLng());
         streetViewPanorama.setPosition(new LatLng(4.635298, -74.082705));
+
+        streetViewPanorama.setOnStreetViewPanoramaChangeListener(streetViewPanoramaLocation -> {
+            if (streetViewPanoramaLocation != null && streetViewPanoramaLocation.links != null) {
+                // location is present
+            } else {
+                DialogManager.showSnackbar(BuildDetailActivity.this, "La ubicación no está disponible");
+            }
+        });
     }
 }

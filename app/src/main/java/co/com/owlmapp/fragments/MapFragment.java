@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,9 +49,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
     //Objects of fragment
     private SupportMapFragment fragment;
     private GoogleMap mMap;
-    private AutoCompleteTextView actvOrigin;
-    private AutoCompleteTextView actvDestination;
-    private Button bTypeMap;
+    private AutoCompleteTextView btnOrigin;
+    private AutoCompleteTextView btnDestination;
+    private FloatingActionButton fabMapType;
 
     //Lists about Places
     private String[] sNomPlaces;
@@ -70,21 +70,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
     private ProgressDialog progressDialog;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         sNomPlaces = getResources().getStringArray(R.array.unLugares);
         ArrayAdapter<String> adapterPlaces = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, sNomPlaces);
 
-        actvOrigin = view.findViewById(R.id.actvOrigin);
-        actvOrigin.setAdapter(adapterPlaces);
+        btnOrigin = view.findViewById(R.id.btnOrigin);
+        btnOrigin.setAdapter(adapterPlaces);
 
-        actvDestination = view.findViewById(R.id.actvDestination);
-        actvDestination.setAdapter(adapterPlaces);
+        btnDestination = view.findViewById(R.id.btnDestination);
+        btnDestination.setAdapter(adapterPlaces);
 
-        bTypeMap = view.findViewById(R.id.MapType);
+        fabMapType = view.findViewById(R.id.fabMapType);
 
         return view;
     }
@@ -99,26 +98,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         listNomPlaces = Arrays.asList(sNomPlaces);
         addAllLatLng();
 
-        bTypeMap.setOnClickListener(v -> changeType(v));
+        fabMapType.setOnClickListener(v -> changeType(v));
 
-        actvOrigin.setOnItemClickListener((parent, view, position, id) -> {
+        btnOrigin.setOnItemClickListener((parent, view, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
             LatLngPosA = setLatLng(sPlace);
             markerPosA = setMarker(markerPosA, LatLngPosA, 0, sPlace);
             sendRequest();
             hideSoftKeyBoard(getActivity());
-            actvOrigin.setText("");
-            actvOrigin.setHint(sPlace);
+            btnOrigin.setText(sPlace);
         });
 
-        actvDestination.setOnItemClickListener((parent, view, position, id) -> {
+        btnDestination.setOnItemClickListener((parent, view, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
             LatLngPosB = setLatLng(sPlace);
             markerPosB = setMarker(markerPosB, LatLngPosB, 1, sPlace);
             sendRequest();
             hideSoftKeyBoard(getActivity());
-            actvDestination.setText("");
-            actvDestination.setHint(sPlace);
+            btnDestination.setText(sPlace);
         });
 
     }
