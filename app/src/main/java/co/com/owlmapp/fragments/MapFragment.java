@@ -1,13 +1,8 @@
 package co.com.owlmapp.fragments;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -18,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -26,9 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -38,6 +30,8 @@ import java.util.List;
 import Modules.DirectionFinder;
 import Modules.DirectionFinderListener;
 import Modules.Route;
+import co.com.millennialapps.utils.tools.DialogManager;
+import co.com.millennialapps.utils.tools.MapHandler;
 import co.com.owlmapp.R;
 
 import static java.lang.Math.floor;
@@ -46,12 +40,10 @@ import static java.lang.Math.sqrt;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, DirectionFinderListener {
 
-    //Objects of fragment
-    private SupportMapFragment fragment;
-    private GoogleMap mMap;
-    private AutoCompleteTextView btnOrigin;
-    private AutoCompleteTextView btnDestination;
-    private FloatingActionButton fabMapType;
+    private MapHandler mapHandler;
+    private AutoCompleteTextView edtOrigin;
+    private AutoCompleteTextView edtDestination;
+    //private FloatingActionButton fabMapType;
 
     //Lists about Places
     private String[] sNomPlaces;
@@ -59,100 +51,89 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
     private List<String> listNomPlaces = new ArrayList<>();
 
     //Properties of position A and position B
-    private LatLng LatLngPosA;
-    private LatLng LatLngPosB;
-    private LatLng LatLngMidPoint;
+    private LatLng latLngPosA;
+    private LatLng latLngPosB;
+    private LatLng latLngMidPoint;
     private Marker markerPosA;
     private Marker markerPosB;
-
-    //Properties of routes
-    private List<Polyline> polylinePaths = new ArrayList<>();
-    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
+        edtOrigin = view.findViewById(R.id.edtOrigin);
+        edtDestination = view.findViewById(R.id.edtDestination);
+        //fabMapType = view.findViewById(R.id.fabMapType);
+
         sNomPlaces = getResources().getStringArray(R.array.unLugares);
         ArrayAdapter<String> adapterPlaces = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, sNomPlaces);
 
-        btnOrigin = view.findViewById(R.id.btnOrigin);
-        btnOrigin.setAdapter(adapterPlaces);
-
-        btnDestination = view.findViewById(R.id.btnDestination);
-        btnDestination.setAdapter(adapterPlaces);
-
-        fabMapType = view.findViewById(R.id.fabMapType);
-
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        FragmentManager fragmentManager = getChildFragmentManager();
-        fragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
+        SupportMapFragment fragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         fragment.getMapAsync(this);
 
         listNomPlaces = Arrays.asList(sNomPlaces);
         addAllLatLng();
 
-        fabMapType.setOnClickListener(v -> changeType(v));
+        //fabMapType.setOnClickListener(v -> changeType(v));
 
-        btnOrigin.setOnItemClickListener((parent, view, position, id) -> {
+        edtOrigin.setThreshold(1);
+        edtOrigin.setOnItemClickListener((parent, myView, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
-            LatLngPosA = setLatLng(sPlace);
-            markerPosA = setMarker(markerPosA, LatLngPosA, 0, sPlace);
+            latLngPosA = setLatLng(sPlace);
+            markerPosA = setMarker(markerPosA, latLngPosA, 0, sPlace);
             sendRequest();
             hideSoftKeyBoard(getActivity());
-            btnOrigin.setText(sPlace);
+            edtOrigin.setText(sPlace);
         });
-
-        btnDestination.setOnItemClickListener((parent, view, position, id) -> {
+        edtDestination.setThreshold(1);
+        edtDestination.setOnItemClickListener((parent, myView, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
-            LatLngPosB = setLatLng(sPlace);
-            markerPosB = setMarker(markerPosB, LatLngPosB, 1, sPlace);
+            latLngPosB = setLatLng(sPlace);
+            markerPosB = setMarker(markerPosB, latLngPosB, 1, sPlace);
             sendRequest();
             hideSoftKeyBoard(getActivity());
-            btnDestination.setText(sPlace);
+            edtDestination.setText(sPlace);
         });
 
+        edtOrigin.setAdapter(adapterPlaces);
+        edtDestination.setAdapter(adapterPlaces);
+
+        return view;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-
-        LatLng unBogota = new LatLng(4.637529, -74.083992);
-        float zoom = (float) 15.5;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(unBogota, zoom));
-
-        if (ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (mapHandler == null) {
+            mapHandler = new MapHandler(googleMap);
         }
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+
+        mapHandler.zoomTo(15.5f, new LatLng(4.637529, -74.083992), false);
+
+        //mapHandler.enableAutoLocation(getActivity(), );
+        /*mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
-        mMap.getUiSettings().setIndoorLevelPickerEnabled(true);
+        mMap.getUiSettings().setIndoorLevelPickerEnabled(true);*/
 
-        mMap.setOnInfoWindowClickListener(MyOnInfoWindowClickListener);
+        mapHandler.addInfoWindowListener(marker -> {
+            Toast.makeText(getActivity(),
+                    marker.getPosition().latitude + ", " + marker.getPosition().longitude,
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }, null, null);
 
     }
 
-    public void changeType(View view) {
+    /*public void changeType(View view) {
         if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         } else
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-    }
+    }*/
 
     public LatLng setLatLng(String sPlace) {
         int index = listNomPlaces.indexOf(sPlace);
@@ -161,10 +142,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
     }
 
     public double distance() {
-        double lon1 = LatLngPosA.longitude;
-        double lon2 = LatLngPosB.longitude;
-        double lat1 = LatLngPosA.latitude;
-        double lat2 = LatLngPosB.latitude;
+        double lon1 = latLngPosA.longitude;
+        double lon2 = latLngPosB.longitude;
+        double lat1 = latLngPosA.latitude;
+        double lat2 = latLngPosB.latitude;
         double x = 110.56 * (lat2 - lat1);
         double y = 84.8 * (lon2 - lon1);
         double d = sqrt(pow(x, 2) + pow(y, 2)) * 1000;
@@ -176,39 +157,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         double latC;
         double lngC;
         double d = distance();
-        if (LatLngPosA != null && LatLngPosB != null) {
-            latC = (LatLngPosA.latitude + LatLngPosB.latitude) / 2;
-            lngC = (LatLngPosA.longitude + LatLngPosB.longitude) / 2;
-            LatLngMidPoint = new LatLng(latC, lngC);
+        if (latLngPosA != null && latLngPosB != null) {
+            latC = (latLngPosA.latitude + latLngPosB.latitude) / 2;
+            lngC = (latLngPosA.longitude + latLngPosB.longitude) / 2;
+            latLngMidPoint = new LatLng(latC, lngC);
 
             if (d > 600) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 15));
+                mapHandler.zoomTo(15f, latLngMidPoint, true);
             } else if (d > 400 && d <= 600) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 16));
+                mapHandler.zoomTo(16f, latLngMidPoint, true);
             } else if (d >= 130 && d <= 400) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 17));
+                mapHandler.zoomTo(17f, latLngMidPoint, true);
             } else {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngMidPoint, 18));
+                mapHandler.zoomTo(18f, latLngMidPoint, true);
             }
         }
     }
 
-    public Marker setMarker(Marker MarkerPosX, LatLng LatLngPosX, int isAB, String sPlace) {
-
-        if (MarkerPosX != null) MarkerPosX.remove();
+    public Marker setMarker(Marker markerPosX, LatLng latLngPosX, int isAB, String sPlace) {
+        if (markerPosX != null) {
+            markerPosX.remove();
+        }
 
         BitmapDescriptor icon;
         if (isAB == 0) icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_a);
         else icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_b);
 
-        Marker vMarker = mMap.addMarker(
-                new MarkerOptions()
-                        .position(LatLngPosX)
-                        .icon(icon)
-                        .title(sPlace)
+        Marker vMarker = mapHandler.addMarker(sPlace, latLngPosX, sPlace);
 
-        );
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngPosX, 16));
+        mapHandler.zoomTo(16f, latLngPosX, true);
         return vMarker;
     }
 
@@ -218,17 +195,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
     }
 
     private void sendRequest() {
-        if (LatLngPosA == null || LatLngPosB == null || LatLngPosA == LatLngPosB) {
-            if (polylinePaths != null) {
-                for (Polyline polyline : polylinePaths) {
-                    polyline.remove();
-                }
-            }
+        if (latLngPosA == null || latLngPosB == null || latLngPosA == latLngPosB) {
+            mapHandler.clearPolylines();
             return;
         }
 
         try {
-            new DirectionFinder(this, LatLngPosA, LatLngPosB).execute();
+            new DirectionFinder(this, latLngPosA, latLngPosB).execute();
             setMidPoint();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -237,35 +210,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
 
     @Override
     public void onDirectionFinderStart() {
-        progressDialog = ProgressDialog.show(getContext(), "Espera un momento.",
-                "Buscando dirección...!", true);
-
-        if (polylinePaths != null) {
-            for (Polyline polyline : polylinePaths) {
-                polyline.remove();
-            }
-        }
+        mapHandler.clearPolylines();
+        DialogManager.showLoadingDialog(getActivity(), R.string.searching, "Estamos buscando la mejor ruta...", true, false);
     }
 
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
-        progressDialog.dismiss();
-        polylinePaths = new ArrayList<>();
-
+        DialogManager.dismissLoadingDialog();
         for (Route route : routes) {
-            Toast.makeText(getContext(), "Tiempo: " + route.duration.text,
-                    Toast.LENGTH_SHORT).show();
-            Toast.makeText(getContext(), "Distancia: " + route.distance.text,
-                    Toast.LENGTH_SHORT).show();
-            PolylineOptions polylineOptions = new PolylineOptions().
-                    geodesic(true).
-                    color(Color.BLUE).
-                    width(7);
-
-            for (int i = 0; i < route.points.size(); i++)
-                polylineOptions.add(route.points.get(i));
-
-            polylinePaths.add(mMap.addPolyline(polylineOptions));
+            mapHandler.addPolyline(R.color.colorAccent, 5, route.points.toArray(new LatLng[route.points.size()]));
+            DialogManager.showSnackbar(getActivity(), "Son " + route.distance.text + " y te demoras " + route.duration.text);
         }
     }
 
@@ -351,8 +305,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         listLatLngPlaces.add(new LatLng(4.643463, -74.083360));
         listLatLngPlaces.add(new LatLng(4.644562, -74.084087)); //80
     }
-
-    GoogleMap.OnInfoWindowClickListener MyOnInfoWindowClickListener = marker -> Toast.makeText(getActivity(),
-            marker.getPosition().latitude + ", " + marker.getPosition().longitude,
-            Toast.LENGTH_LONG).show();
 }

@@ -67,20 +67,17 @@ public class EventsFragment extends Fragment {
 
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(EventsFragment.this.getActivity());
 
-        EventsFragment.this.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
-                rclEvents.setLayoutManager(mLayoutManager);
-                rclEvents.setAdapter(rclEventsAdapter);
-            }
+        EventsFragment.this.getActivity().runOnUiThread(() -> {
+            getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+            rclEvents.setLayoutManager(mLayoutManager);
+            rclEvents.setAdapter(rclEventsAdapter);
         });
     }
 
     public String obtainUrl(String text) {
         String url = "";
         int i = text.indexOf("https://t.co/");
-        while (i < text.length()) {
+        while (i < text.length() && i != -1) {
             if (text.charAt(i) != ' ') {
                 url += text.charAt(i);
                 i++;

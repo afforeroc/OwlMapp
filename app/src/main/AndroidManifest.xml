@@ -39,6 +39,7 @@
             android:name=".activities.BuildDetailActivity"
             android:label="@string/title_activity_build_detail"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.AboutActivity"></activity>
     </application>
 
 </manifest>
