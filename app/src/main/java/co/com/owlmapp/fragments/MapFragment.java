@@ -99,6 +99,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Directi
         edtOrigin.setAdapter(adapterPlaces);
         edtDestination.setAdapter(adapterPlaces);
 
+        setHasOptionsMenu(true);
         return view;
     }
 

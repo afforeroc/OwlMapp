@@ -6,24 +6,30 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 
 import com.google.gson.Gson;
 
 import java.util.LinkedList;
 
+import co.com.millennialapps.utils.tools.Preferences;
 import co.com.owlmapp.R;
+import co.com.owlmapp.SearchBarHandler;
 import co.com.owlmapp.activities.BuildDetailActivity;
+import co.com.owlmapp.activities.MainActivity;
 import co.com.owlmapp.adapters.RclBuildingsAdapter;
 import co.com.owlmapp.models.Building;
 
 public class BuildingsFragment extends Fragment {
 
     private LinkedList<Building> buildings = new LinkedList<>();
-    private SearchView mSearchView;
     private RecyclerView rclBuildings;
+    private RclBuildingsAdapter adapter;
+    private Menu menu;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,9 +37,8 @@ public class BuildingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_places, container, false);
 
         buildingsMap();
-        mSearchView = view.findViewById(R.id.searchView);
         rclBuildings = view.findViewById(R.id.rclBuildings);
-        RclBuildingsAdapter adapter = new RclBuildingsAdapter(getActivity(), buildings,
+        adapter = new RclBuildingsAdapter(getActivity(), buildings,
                 (building, context) -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("building", new Gson().toJson(building));
@@ -46,22 +51,66 @@ public class BuildingsFragment extends Fragment {
         rclBuildings.setLayoutManager(mLayoutManager);
         rclBuildings.setAdapter(adapter);
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        setHasOptionsMenu(true);
+        return view;
+    }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.buildings, menu);
+        this.menu = menu;
+
+        handleBarIcons();
+
+        ((MainActivity) getActivity()).setSbHandler(new SearchBarHandler(getActivity(), menu, R.id.action_search, R.string.search,
+                null, R.color.colorPrimaryDark));
+        ((MainActivity) getActivity()).getSbHandler().addChangeTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                rclBuildings.setVisibility(View.INVISIBLE);
-                return false;
+                Preferences.saveSuggestion(getActivity(), query);
+                query = query.toLowerCase();
+                if (!((MainActivity) getActivity()).getSbHandler().getSearchView().isIconified()) {
+                    ((MainActivity) getActivity()).getSbHandler().getSearchView().setIconified(true);
+                }
+                ((MainActivity) getActivity()).getSbHandler().close();
+
+                return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                rclBuildings.setVisibility(View.VISIBLE);
-                return false;
+            public boolean onQueryTextChange(String s) {
+                ((MainActivity) getActivity()).getSbHandler().populateAdapter(s);
+                LinkedList<Building> filtered = new LinkedList<>();
+                for (Building building : buildings) {
+                    if (building.getName().toLowerCase().contains(s.toLowerCase())
+                            || building.getNumber().contains(s)
+                            || (building.getNumber() + " " + building.getName().toLowerCase()).contains(s.toLowerCase())) {
+                        filtered.add(building);
+
+                    }
+                }
+
+                adapter.setBuildings(filtered);
+
+                return true;
             }
         });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-        return view;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_cancel:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void handleBarIcons() {
+        menu.findItem(R.id.action_cancel).setVisible(false);
+        menu.findItem(R.id.action_search).setVisible(true);
     }
 
     private void buildingsMap() {

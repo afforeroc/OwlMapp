@@ -46,6 +46,7 @@ public class EventsFragment extends Fragment {
             }
         });
 
+        setHasOptionsMenu(true);
         return view;
     }
 

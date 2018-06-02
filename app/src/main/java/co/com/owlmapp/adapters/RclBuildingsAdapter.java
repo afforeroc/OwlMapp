@@ -20,7 +20,7 @@ public class RclBuildingsAdapter extends RecyclerView.Adapter<RclBuildingsAdapte
         void onItemClick(Building category, Context context);
     }
 
-    private final List<Building> buildings;
+    private List<Building> buildings;
     private final OnItemClickListener listener;
     private final Activity activity;
 
@@ -38,6 +38,11 @@ public class RclBuildingsAdapter extends RecyclerView.Adapter<RclBuildingsAdapte
     @Override
     public long getItemId(int i) {
         return i;
+    }
+
+    public void setBuildings(List<Building> buildings) {
+        this.buildings = buildings;
+        notifyDataSetChanged();
     }
 
     @Override

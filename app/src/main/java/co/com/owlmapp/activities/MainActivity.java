@@ -14,12 +14,13 @@ import android.view.MenuItem;
 import com.google.firebase.auth.FirebaseAuth;
 
 import co.com.owlmapp.R;
+import co.com.owlmapp.SearchBarHandler;
 import co.com.owlmapp.adapters.TabSectionsAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ViewPager mViewPager;
-    public static FragmentManager fragmentManager;
+    private static FragmentManager fragmentManager;
+    private SearchBarHandler sbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,18 +44,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildTabs() {
-        mViewPager = findViewById(R.id.container);
+        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(new TabSectionsAdapter(getSupportFragmentManager()));
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if(sbHandler != null) {
+                    sbHandler.close();
+                }
+            }
+        });
 
         fragmentManager = getSupportFragmentManager();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.principal, menu);
         return true;
     }
 
@@ -66,5 +86,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public SearchBarHandler getSbHandler() {
+        return sbHandler;
+    }
+
+    public void setSbHandler(SearchBarHandler sbHandler) {
+        this.sbHandler = sbHandler;
     }
 }

@@ -18,7 +18,7 @@ public class Building {
     private String urlImage;
 
     public Building(String description, String name) {
-        this.name = name.substring(3);
+        this.name = name.substring(4);
         this.description = description;
         this.number = name.substring(0, 3);
     }

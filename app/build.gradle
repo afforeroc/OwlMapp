@@ -9,7 +9,7 @@ android {
         targetSdkVersion 26
         multiDexEnabled true
         versionCode 1
-        versionName "0.60.239"
+        versionName "0.64.833"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {

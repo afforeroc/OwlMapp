@@ -10,7 +10,7 @@ import co.com.owlmapp.fragments.MapFragment;
 
 public class TabSectionsAdapter extends FragmentPagerAdapter {
 
-    String tabTitles[] = new String[]{"Mapa", "Edificios", "Eventos",};
+    private String tabTitles[] = new String[]{"Mapa", "Edificios", "Eventos"};
 
     public TabSectionsAdapter(FragmentManager fm) {
         super(fm);
@@ -18,7 +18,6 @@ public class TabSectionsAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-
         switch (position) {
             case 0:
                 return new MapFragment();
