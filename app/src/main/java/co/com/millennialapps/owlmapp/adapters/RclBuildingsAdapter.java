@@ -1,4 +1,4 @@
-package co.com.owlmapp.adapters;
+package co.com.millennialapps.owlmapp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import co.com.millennialapps.utils.firebase.FStorageManager;
-import co.com.owlmapp.R;
-import co.com.owlmapp.models.Building;
+import co.com.millennialapps.owlmapp.R;
+import co.com.millennialapps.owlmapp.models.Building;
 
 public class RclBuildingsAdapter extends RecyclerView.Adapter<RclBuildingsAdapter.ViewHolder> {
 

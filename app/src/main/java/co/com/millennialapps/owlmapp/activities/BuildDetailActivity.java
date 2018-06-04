@@ -1,4 +1,4 @@
-package co.com.owlmapp.activities;
+package co.com.millennialapps.owlmapp.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,8 +13,8 @@ import com.google.gson.Gson;
 
 import co.com.millennialapps.utils.activities.BaseActivity;
 import co.com.millennialapps.utils.tools.DialogManager;
-import co.com.owlmapp.R;
-import co.com.owlmapp.models.Building;
+import co.com.millennialapps.owlmapp.R;
+import co.com.millennialapps.owlmapp.models.Building;
 
 public class BuildDetailActivity extends BaseActivity implements OnStreetViewPanoramaReadyCallback {
 
@@ -44,8 +44,7 @@ public class BuildDetailActivity extends BaseActivity implements OnStreetViewPan
 
     @Override
     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
-        //streetViewPanorama.setPosition(building.getLatLng());
-        streetViewPanorama.setPosition(new LatLng(4.635298, -74.082705));
+        streetViewPanorama.setPosition(building.getLatLng());
 
         streetViewPanorama.setOnStreetViewPanoramaChangeListener(streetViewPanoramaLocation -> {
             if (streetViewPanoramaLocation != null && streetViewPanoramaLocation.links != null) {

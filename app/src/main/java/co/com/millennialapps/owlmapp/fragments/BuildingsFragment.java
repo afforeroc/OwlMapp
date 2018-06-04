@@ -1,7 +1,9 @@
-package co.com.owlmapp.fragments;
+package co.com.millennialapps.owlmapp.fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -12,17 +14,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
+import co.com.millennialapps.owlmapp.models.Node;
+import co.com.millennialapps.utils.firebase.FFirestoreManager;
 import co.com.millennialapps.utils.tools.Preferences;
-import co.com.owlmapp.R;
-import co.com.owlmapp.SearchBarHandler;
-import co.com.owlmapp.activities.BuildDetailActivity;
-import co.com.owlmapp.activities.MainActivity;
-import co.com.owlmapp.adapters.RclBuildingsAdapter;
-import co.com.owlmapp.models.Building;
+import co.com.millennialapps.owlmapp.R;
+import co.com.millennialapps.owlmapp.activities.BuildDetailActivity;
+import co.com.millennialapps.owlmapp.activities.MainActivity;
+import co.com.millennialapps.owlmapp.adapters.RclBuildingsAdapter;
+import co.com.millennialapps.owlmapp.models.Building;
+import co.com.millennialapps.utils.tools.SearchBarHandler;
 
 public class BuildingsFragment extends Fragment {
 
@@ -36,7 +47,6 @@ public class BuildingsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_places, container, false);
 
-        buildingsMap();
         rclBuildings = view.findViewById(R.id.rclBuildings);
         adapter = new RclBuildingsAdapter(getActivity(), buildings,
                 (building, context) -> {
@@ -47,6 +57,26 @@ public class BuildingsFragment extends Fragment {
                     getActivity().startActivity(i);
                 });
 
+        FFirestoreManager.getInstance().get(getActivity(), "Nodes", task -> {
+            for (QueryDocumentSnapshot document : task.getResult()) {
+                Node node = document.toObject(Node.class);
+                node.setId(document.getId());
+                if (!node.getType().equals("Camino")) {
+                    Building building = new Building();
+                    building.setId(node.getId());
+                    building.setDescription(node.getDescription());
+                    building.setLatitude(node.getLatitude());
+                    building.setLongitude(node.getLongitude());
+                    building.setName(node.getName());
+                    building.setNumber(node.getNumber());
+                    buildings.add(building);
+                }
+            }
+
+            Collections.sort(buildings, (o1, o2) -> o1.getNumber().compareTo(o2.getNumber()));
+
+            adapter.setBuildings(buildings);
+        });
         RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rclBuildings.setLayoutManager(mLayoutManager);
         rclBuildings.setAdapter(adapter);
@@ -112,7 +142,7 @@ public class BuildingsFragment extends Fragment {
         menu.findItem(R.id.action_cancel).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(true);
     }
-
+/*
     private void buildingsMap() {
         buildings.add(new Building("Construido para ser ocupado por las oficinas administrativas de la Universidad, ya que desde un principio, este edificio, ha sido considerado como el eje de la Institución, debido a su ubicación y altura.\n" +
                 "Con sus once pisos, es sin duda, la edificación más alta del Campus Universitario, es la única edificación dentro de la zona universitaria que posee ascensor.", "101 Torre de Enfermería"));
@@ -252,5 +282,5 @@ public class BuildingsFragment extends Fragment {
         buildings.add(new Building("Estructura residencial concebida dentro del Programa de Bienestar Estudiantil.\n" +
                 "Cuenta con 556 apartamentos los cuales fueron ocupados por estudiantes de intercambio y otros, su diseño se basó en la posibilidad de generar un ambiente familiar y seguro.\n" +
                 "Durante su ocupación se realizaron una serie de cambios no aprobados, ejecutados por sus ocupantes, los cuales han alterado la hegemonía de la construcción.", "862 Unidad Camilo Torres"));
-    }
+    }*/
 }

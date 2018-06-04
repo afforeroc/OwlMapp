@@ -1,11 +1,11 @@
-package co.com.owlmapp.activities;
+package co.com.millennialapps.owlmapp.activities;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import co.com.millennialapps.utils.activities.BaseActivity;
-import co.com.owlmapp.R;
+import co.com.millennialapps.owlmapp.R;
 
 public class AboutActivity extends BaseActivity {
 

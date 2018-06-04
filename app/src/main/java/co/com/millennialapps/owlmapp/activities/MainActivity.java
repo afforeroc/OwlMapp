@@ -1,4 +1,4 @@
-package co.com.owlmapp.activities;
+package co.com.millennialapps.owlmapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,15 +7,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import co.com.owlmapp.R;
-import co.com.owlmapp.SearchBarHandler;
-import co.com.owlmapp.adapters.TabSectionsAdapter;
+import co.com.millennialapps.owlmapp.R;
+import co.com.millennialapps.owlmapp.adapters.TabSectionsAdapter;
+import co.com.millennialapps.utils.common.IAuthResult;
+import co.com.millennialapps.utils.firebase.FAuthManager;
+import co.com.millennialapps.utils.tools.SearchBarHandler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,14 +35,8 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             buildTabs();
         } else {
-            signInAnonymously();
+            FAuthManager.getInstance().authAnonymously(MainActivity.this, result -> {});
         }
-    }
-
-    private void signInAnonymously() {
-        //TODO FAuthManager.getInstance().authAnonymously()
-        FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(this, authResult -> buildTabs()
-        ).addOnFailureListener(this, exception -> Log.e("TAG", "signInAnonymously:FAILURE", exception));
     }
 
     private void buildTabs() {

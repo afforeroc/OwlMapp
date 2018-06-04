@@ -1,4 +1,4 @@
-package co.com.owlmapp.fragments;
+package co.com.millennialapps.owlmapp.fragments;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Modules.TwitterConnection;
-import co.com.owlmapp.R;
-import co.com.owlmapp.adapters.RclEventsAdapter;
-import co.com.owlmapp.models.Event;
+import co.com.millennialapps.owlmapp.R;
+import co.com.millennialapps.owlmapp.adapters.RclEventsAdapter;
+import co.com.millennialapps.owlmapp.models.Event;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterAdapter;

@@ -1,4 +1,4 @@
-package co.com.owlmapp.models;
+package co.com.millennialapps.owlmapp.models;
 
 /**
  * Created by Erick Velasco on 9/5/2018.

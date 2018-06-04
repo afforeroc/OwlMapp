@@ -1,4 +1,4 @@
-package co.com.owlmapp.activities;
+package co.com.millennialapps.owlmapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import co.com.millennialapps.utils.tools.DialogManager;
-import co.com.owlmapp.R;
+import co.com.millennialapps.owlmapp.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

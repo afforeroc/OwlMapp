@@ -1,4 +1,4 @@
-package co.com.owlmapp.fragments;
+package co.com.millennialapps.owlmapp.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -32,7 +32,7 @@ import Modules.DirectionFinderListener;
 import Modules.Route;
 import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.millennialapps.utils.tools.MapHandler;
-import co.com.owlmapp.R;
+import co.com.millennialapps.owlmapp.R;
 
 import static java.lang.Math.floor;
 import static java.lang.Math.pow;

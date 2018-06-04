@@ -1,12 +1,12 @@
-package co.com.owlmapp.adapters;
+package co.com.millennialapps.owlmapp.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import co.com.owlmapp.fragments.BuildingsFragment;
-import co.com.owlmapp.fragments.EventsFragment;
-import co.com.owlmapp.fragments.MapFragment;
+import co.com.millennialapps.owlmapp.fragments.BuildingsFragment;
+import co.com.millennialapps.owlmapp.fragments.EventsFragment;
+import co.com.millennialapps.owlmapp.fragments.MapFragment;
 
 public class TabSectionsAdapter extends FragmentPagerAdapter {
 
