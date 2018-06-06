@@ -10,12 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import co.com.millennialapps.owlmapp.R;
 import co.com.millennialapps.owlmapp.adapters.TabSectionsAdapter;
-import co.com.millennialapps.utils.common.IAuthResult;
 import co.com.millennialapps.utils.firebase.FAuthManager;
 import co.com.millennialapps.utils.tools.SearchBarHandler;
 

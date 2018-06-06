@@ -9,7 +9,7 @@ android {
         targetSdkVersion 27
         multiDexEnabled true
         versionCode 1
-        versionName "0.64.833"
+        versionName "0.78.271"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -27,7 +27,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'co.com.millennialapps:utils:0.35.975'
+    implementation 'co.com.millennialapps:utils:0.38.190'
 
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
