@@ -1,4 +1,4 @@
-package Modules;
+package co.com.millennialapps.owlmapp.utilitites;
 
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
