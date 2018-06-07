@@ -3,23 +3,18 @@ package co.com.millennialapps.owlmapp.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import co.com.millennialapps.owlmapp.R;
 import co.com.millennialapps.owlmapp.adapters.TabSectionsAdapter;
-import co.com.millennialapps.utils.firebase.FAuthManager;
 import co.com.millennialapps.utils.tools.SearchBarHandler;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static FragmentManager fragmentManager;
     private SearchBarHandler sbHandler;
 
     @Override
@@ -30,11 +25,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            buildTabs();
-        } else {
-            FAuthManager.getInstance().authAnonymously(MainActivity.this, result -> {});
-        }
+        buildTabs();
     }
 
     private void buildTabs() {
@@ -62,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        fragmentManager = getSupportFragmentManager();
     }
 
     @Override

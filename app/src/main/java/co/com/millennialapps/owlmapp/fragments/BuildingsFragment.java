@@ -1,9 +1,7 @@
 package co.com.millennialapps.owlmapp.fragments;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,25 +12,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 
-import co.com.millennialapps.owlmapp.models.Node;
-import co.com.millennialapps.utils.firebase.FFirestoreManager;
-import co.com.millennialapps.utils.tools.Preferences;
 import co.com.millennialapps.owlmapp.R;
 import co.com.millennialapps.owlmapp.activities.BuildDetailActivity;
 import co.com.millennialapps.owlmapp.activities.MainActivity;
 import co.com.millennialapps.owlmapp.adapters.RclBuildingsAdapter;
 import co.com.millennialapps.owlmapp.models.Building;
+import co.com.millennialapps.owlmapp.models.Node;
+import co.com.millennialapps.utils.firebase.FFirestoreManager;
+import co.com.millennialapps.utils.tools.Preferences;
 import co.com.millennialapps.utils.tools.SearchBarHandler;
 
 public class BuildingsFragment extends Fragment {
