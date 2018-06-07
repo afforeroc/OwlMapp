@@ -98,7 +98,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         edtOrigin.setThreshold(1);
         edtOrigin.setOnItemClickListener((parent, myView, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
-            markerPosA = setMarker(markerPosA, getNode(sPlace), sPlace);
+            nodeFrom = getNode(sPlace);
+            markerPosA = setMarker(markerPosA, nodeFrom, true, sPlace);
             sendRequest();
             hideSoftKeyBoard(getActivity());
             edtOrigin.setText(sPlace);
@@ -106,7 +107,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         edtDestination.setThreshold(1);
         edtDestination.setOnItemClickListener((parent, myView, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
-            markerPosB = setMarker(markerPosB, getNode(sPlace), sPlace);
+            nodeTo = getNode(sPlace);
+            markerPosB = setMarker(markerPosB, nodeTo, false, sPlace);
             sendRequest();
             hideSoftKeyBoard(getActivity());
             edtDestination.setText(sPlace);
@@ -143,18 +145,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return null;
     }
 
-    public Marker setMarker(Marker markerPosX, Node node, String sPlace) {
+    public Marker setMarker(Marker markerPosX, Node node, boolean isFrom, String sPlace) {
         if (markerPosX != null) {
             markerPosX.remove();
         }
 
         Marker vMarker;
-        if (nodeFrom == null) {
+
+        if (isFrom) {
             vMarker = mapHandler.addMarker(sPlace, node.getLatLng(), sPlace, MapHandler.HUE_GREEN, node.getName(), node.getDescription());
-            nodeFrom = node;
         } else {
             vMarker = mapHandler.addMarker(sPlace, node.getLatLng(), sPlace, MapHandler.HUE_RED, node.getName(), node.getDescription());
-            nodeTo = node;
         }
 
         mapHandler.zoomTo(16f, node.getLatLng(), true);
