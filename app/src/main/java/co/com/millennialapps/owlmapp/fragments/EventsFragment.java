@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import Modules.TwitterConnection;
+import co.com.millennialapps.owlmapp.utilitites.TwitterConnection;
 import co.com.millennialapps.owlmapp.R;
 import co.com.millennialapps.owlmapp.adapters.RclEventsAdapter;
 import co.com.millennialapps.owlmapp.models.Event;
