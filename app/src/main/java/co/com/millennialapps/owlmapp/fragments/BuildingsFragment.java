@@ -62,6 +62,9 @@ public class BuildingsFragment extends Fragment {
                     building.setLongitude(node.getLongitude());
                     building.setName(node.getName());
                     building.setNumber(node.getNumber());
+                    building.setEmail(node.getEmail());
+                    building.setPhone(node.getPhone());
+                    building.setWebPage(node.getWebPage());
                     buildings.add(building);
                 }
             }

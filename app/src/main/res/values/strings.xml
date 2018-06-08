@@ -7,4 +7,9 @@
     <string name="designed_by">Diseñado por</string>
     <string name="special_thanks">Agradecimientos especiales</string>
     <string name="thanks_for_use">Gracias por usar la app</string>
+    <string name="no_number">Sin número</string>
+    <string name="no_description">Sin descripción</string>
+    <string name="no_phone">Sin teléfono</string>
+    <string name="no_web_page">Sin página web</string>
+    <string name="no_email">Sin Email</string>
 </resources>

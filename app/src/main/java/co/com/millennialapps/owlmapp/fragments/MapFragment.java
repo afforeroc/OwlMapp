@@ -84,6 +84,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             building.setLongitude(node.getLongitude());
                             building.setName(node.getName());
                             building.setNumber(node.getNumber());
+                            building.setEmail(node.getEmail());
+                            building.setPhone(node.getPhone());
+                            building.setWebPage(node.getWebPage());
                             buildings.add(building);
                         }
                     }
@@ -240,17 +243,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapHandler.zoomToMarkers();
         Dijkstra.getInstance(mapHandler).findShortestPath(nodes, nodeFrom, nodeTo);
         Dijkstra.getInstance(mapHandler).paintPath(getActivity(), nodeFrom, nodeTo);
-        /*mapHandler.routes(fromPos, toPos, getString(R.string.google_maps_key),
-                result -> {
-                    if(result.getRoutes().size() > 0){
-                        if(result.getRoutes().get(0).getLegs().size() > 0){
-                            if(result.getRoutes().get(0).getLegs().get(0).getSteps().size() > 0){
-                                for(Step step : result.getRoutes().get(0).getLegs().get(0).getSteps()){
-                                    mapHandler.addPolyline(ContextCompat.getColor(getActivity(), R.color.black), 5, step.getPolyline().getDecodedPoints());
-                                }
-                            }
-                        }
-                    }
-                });*/
     }
 }

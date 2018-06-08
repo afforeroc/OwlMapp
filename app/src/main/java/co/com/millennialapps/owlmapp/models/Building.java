@@ -15,6 +15,9 @@ public class Building {
     private String description;
     private double latitude;
     private double longitude;
+    private String phone;
+    private String email;
+    private String webPage;
 
     @Exclude
     public LatLng getLatLng() {
@@ -68,5 +71,29 @@ public class Building {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getWebPage() {
+        return webPage;
+    }
+
+    public void setWebPage(String webPage) {
+        this.webPage = webPage;
     }
 }
