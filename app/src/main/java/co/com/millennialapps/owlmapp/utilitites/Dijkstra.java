@@ -252,12 +252,6 @@ public class Dijkstra {
     }
 
     public void paintPath(Activity activity, Node nodeFrom, Node nodeTo) {
-        mapHandler.clearMarkers();
-        mapHandler.clearPolylines();
-        mapHandler.addMarker(nodeFrom.getId(), nodeFrom.getLatLng(), nodeFrom, MapHandler.HUE_GREEN,
-                nodeFrom.getName(), nodeFrom.getDescription());
-        mapHandler.addMarker(nodeTo.getId(), nodeTo.getLatLng(), nodeTo, MapHandler.HUE_RED,
-                nodeTo.getName(), nodeTo.getDescription());
         ArrayList<LatLng> nodes = new ArrayList<>();
         for (int i = 0; i < shortestPath.size(); i++) {
             nodes.add(shortestPath.get(i).getLatLng());

@@ -3,13 +3,16 @@ package co.com.millennialapps.owlmapp.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -31,7 +34,7 @@ import co.com.millennialapps.owlmapp.models.Building;
 import co.com.millennialapps.owlmapp.models.Node;
 import co.com.millennialapps.owlmapp.utilitites.Dijkstra;
 import co.com.millennialapps.utils.firebase.FFirestoreManager;
-import co.com.millennialapps.utils.models.route.Step;
+import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.millennialapps.utils.tools.MapHandler;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -39,6 +42,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private MapHandler mapHandler;
     private AutoCompleteTextView edtOrigin;
     private AutoCompleteTextView edtDestination;
+    private ImageButton ibtClearOrigin;
+    private ImageButton ibtClearDestination;
     //private FloatingActionButton fabMapType;
 
     //Lists about Places
@@ -57,6 +62,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         edtOrigin = view.findViewById(R.id.edtOrigin);
         edtDestination = view.findViewById(R.id.edtDestination);
+        ibtClearOrigin = view.findViewById(R.id.ibtClearOrigin);
+        ibtClearDestination = view.findViewById(R.id.ibtClearDestination);
         //fabMapType = view.findViewById(R.id.fabMapType);
 
         SupportMapFragment fragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -93,7 +100,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     edtDestination.setAdapter(adapterPlaces);
                 });
 
-        //fabMapType.setOnClickListener(v -> changeType(v));
+        ibtClearOrigin.setOnClickListener(v -> {
+            edtOrigin.setText("");
+            nodeFrom = null;
+            if(markerPosA != null) {
+                markerPosA.remove();
+                markerPosA = null;
+            }
+            mapHandler.clearPolylines();
+        });
+        ibtClearDestination.setOnClickListener(v -> {
+            edtDestination.setText("");
+            nodeTo = null;
+            if(markerPosB != null) {
+                markerPosB.remove();
+                markerPosB = null;
+            }
+            mapHandler.clearPolylines();
+        });
 
         edtOrigin.setThreshold(1);
         edtOrigin.setOnItemClickListener((parent, myView, position, id) -> {
@@ -101,8 +125,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             nodeFrom = getNode(sPlace);
             markerPosA = setMarker(markerPosA, nodeFrom, true, sPlace);
             sendRequest();
-            hideSoftKeyBoard(getActivity());
+            hideSoftKeyBoard();
             edtOrigin.setText(sPlace);
+        });
+        edtOrigin.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    ibtClearOrigin.setVisibility(View.VISIBLE);
+                } else {
+                    ibtClearOrigin.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
         edtDestination.setThreshold(1);
         edtDestination.setOnItemClickListener((parent, myView, position, id) -> {
@@ -110,8 +154,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             nodeTo = getNode(sPlace);
             markerPosB = setMarker(markerPosB, nodeTo, false, sPlace);
             sendRequest();
-            hideSoftKeyBoard(getActivity());
+            hideSoftKeyBoard();
             edtDestination.setText(sPlace);
+        });
+        edtDestination.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    ibtClearDestination.setVisibility(View.VISIBLE);
+                } else {
+                    ibtClearDestination.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
 
         setHasOptionsMenu(true);
@@ -162,9 +226,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return vMarker;
     }
 
-    public static void hideSoftKeyBoard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    public void hideSoftKeyBoard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     private void sendRequest() {
