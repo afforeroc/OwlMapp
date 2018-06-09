@@ -9,40 +9,64 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <AutoCompleteTextView
-        android:id="@+id/edtOrigin"
+    <FrameLayout
+        android:id="@+id/lytOrigin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:background="@color/white"
-        android:hint="Dónde estás..."
-        android:padding="12dp"
-        android:singleLine="true" />
+        android:layout_marginTop="32dp">
 
-    <AutoCompleteTextView
-        android:id="@+id/edtDestination"
+        <AutoCompleteTextView
+            android:id="@+id/edtOrigin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:hint="Dónde estás..."
+            android:padding="12dp"
+            android:singleLine="true" />
+
+        <ImageButton
+            android:id="@+id/ibtClearOrigin"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginRight="8dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_action_cancel"
+            android:tint="@color/ligth_gray"
+            android:visibility="invisible" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/lytDestination"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edtOrigin"
+        android:layout_below="@+id/lytOrigin"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="1dp"
-        android:textColor="@color/black"
-        android:background="@color/white"
-        android:hint="A dónde vas..."
-        android:padding="12dp"
-        android:singleLine="true" />
+        android:layout_marginTop="1dp">
 
-    <!--android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabMapType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:src="@android:drawable/ic_menu_view"
-        android:drawableTint="@color/black" /-->
+        <AutoCompleteTextView
+            android:id="@+id/edtDestination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:hint="A dónde vas..."
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textColor="@color/black" />
+
+        <ImageButton
+            android:id="@+id/ibtClearDestination"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginRight="8dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_action_cancel"
+            android:tint="@color/ligth_gray"
+            android:visibility="invisible" />
+    </FrameLayout>
 
 </RelativeLayout>

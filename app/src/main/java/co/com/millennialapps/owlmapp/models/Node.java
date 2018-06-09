@@ -19,6 +19,7 @@ public class Node {
     private String type;
     private String phone;
     private String email;
+    private String webPage;
     private double latitude;
     private double longitude;
     private boolean searchDirection;
@@ -78,6 +79,14 @@ public class Node {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getWebPage() {
+        return webPage;
+    }
+
+    public void setWebPage(String webPage) {
+        this.webPage = webPage;
     }
 
     public double getLatitude() {

@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void buildTabs() {
         ViewPager mViewPager = findViewById(R.id.container);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(new TabSectionsAdapter(getSupportFragmentManager()));
 
         TabLayout tabLayout = findViewById(R.id.tabs);
