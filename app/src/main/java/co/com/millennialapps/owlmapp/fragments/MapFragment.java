@@ -1,14 +1,12 @@
 package co.com.millennialapps.owlmapp.fragments;
 
 import android.app.Activity;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +25,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +38,6 @@ import co.com.millennialapps.owlmapp.models.Building;
 import co.com.millennialapps.owlmapp.models.Node;
 import co.com.millennialapps.owlmapp.utilitites.Dijkstra;
 import co.com.millennialapps.owlmapp.utilitites.Shared;
-import co.com.millennialapps.utils.firebase.FFirestoreManager;
 import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.millennialapps.utils.tools.MapHandler;
 
@@ -54,18 +50,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private AutoCompleteTextView edtDestination;
     private ImageButton ibtClearOrigin;
     private ImageButton ibtClearDestination;
-    //private FloatingActionButton fabMapType;
 
-    //Lists about Places
     private HashMap<String, String> sNomPlaces = new HashMap<>();
 
-    //Properties of position A and position B
+    private final LatLng unalLatLng = new LatLng(4.637529, -74.083992);
     private Marker markerPosA;
     private Marker markerPosB;
     private Node nodeFrom;
     private Node nodeTo;
     private GoogleApiClient mGoogleApiClient;
     private SupportMapFragment fragment;
+
+    private boolean showedMessage = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -136,14 +132,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         edtOrigin.setOnItemClickListener((parent, myView, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
             if (sPlace.equals("Tu ubicación")) {
-                nodeFrom = Dijkstra.getInstance(mapHandler).getCloserNodeFromMyLocation(mapHandler, Shared.nodes);
+                showedMessage = false;
+                intoUniversity();
             } else {
                 nodeFrom = getNode(sPlace);
             }
-            markerPosA = setMarker(markerPosA, nodeFrom, true, sPlace);
-            sendRequest();
-            hideSoftKeyBoard();
-            edtOrigin.setText(sPlace);
+            if (nodeFrom != null) {
+                markerPosA = setMarker(markerPosA, nodeFrom, true, sPlace);
+                sendRequest();
+                hideSoftKeyBoard();
+                edtOrigin.setText(sPlace);
+            }
         });
         edtOrigin.addTextChangedListener(new TextWatcher() {
             @Override
@@ -223,7 +222,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             //TODO
         });
 
-        mapHandler.zoomTo(15.5f, new LatLng(4.637529, -74.083992), false);
+        mapHandler.zoomTo(15.5f, unalLatLng, false);
 
         mapHandler.addInfoWindowListener(marker -> {
             Toast.makeText(getActivity(),
@@ -232,8 +231,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             return false;
         }, null, null);
 
-        if (mapHandler.distance(mapHandler.getMyLocation(), new LatLng(4.637529, -74.083992), MapHandler.METERS) > 600) {
-            DialogManager.showMessageDialog(getActivity(), R.string.warning, "Ups, parece que estás muy lejos de la universidad como para darte una ruta desde tu ubicación actual. Pero aun puedes mirar rutas entre edificios y lugares de la U. ¡Inténtalo!");
+        intoUniversity();
+    }
+
+    private void intoUniversity() {
+        if (mapHandler.distance(mapHandler.getMyLocation(), unalLatLng, MapHandler.METERS) > 600) {
+            if (!showedMessage) {
+                DialogManager.showMessageDialog(getActivity(), R.string.warning, "Ups, parece que estás muy lejos de la universidad como para darte una ruta desde tu ubicación actual. Pero aun puedes mirar rutas entre edificios y lugares de la U. ¡Inténtalo!");
+                showedMessage = true;
+            }
+            edtOrigin.setText("");
+            edtOrigin.clearFocus();
         } else {
             nodeFrom = Dijkstra.getInstance(mapHandler).getCloserNodeFromMyLocation(mapHandler, Shared.nodes);
             edtOrigin.setText("Tu ubicación");
