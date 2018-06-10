@@ -67,6 +67,32 @@
 
             <View style="@style/Divider" />
 
+
+            <LinearLayout
+                android:id="@+id/lytHelpUs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtHelpUs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:autoLink="email"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:text="Ayúdanos a completar información sobre las edificaciones de la Universidad. Fotos, números de teléfono, páginas web, todo es bienvenido.\nDéjanos un correo a support@millennialapps.com.co.\n\n¡Una aplicación hecha por los estudiantes, para los estudiantes!"
+                    android:textColor="@color/red"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
+            </LinearLayout>
+
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,6 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:autoLink="phone"
                     android:gravity="center_vertical"
                     android:padding="16dp" />
             </LinearLayout>
@@ -131,6 +158,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:autoLink="email"
                     android:gravity="center_vertical"
                     android:padding="16dp" />
             </LinearLayout>
@@ -154,6 +182,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:autoLink="web"
                     android:gravity="center_vertical"
                     android:padding="16dp" />
             </LinearLayout>

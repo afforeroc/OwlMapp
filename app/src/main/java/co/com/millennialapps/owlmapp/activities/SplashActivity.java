@@ -1,5 +1,6 @@
 package co.com.millennialapps.owlmapp.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.Collections;
+
+import co.com.millennialapps.owlmapp.models.Building;
+import co.com.millennialapps.owlmapp.models.Node;
+import co.com.millennialapps.owlmapp.utilitites.Shared;
+import co.com.millennialapps.utils.firebase.FFirestoreManager;
+import co.com.millennialapps.utils.tools.ConnectionManager;
 import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.millennialapps.owlmapp.R;
 
@@ -29,12 +39,24 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (ConnectionManager.hasInternet(SplashActivity.this)) {
+                    FFirestoreManager.getInstance().get(SplashActivity.this, "Nodes", task -> {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Node node = document.toObject(Node.class);
+                            node.setId(document.getId());
+                            Shared.nodes.put(document.getId(), node);
+                        }
+                        logoOut();
+                    });
+                } else {
+                    DialogManager.showConfirmationDialog(SplashActivity.this, R.string.not_internet,
+                            "Parece que no tiene internet ahora. Si estás dentro de la Universidad puedes conectarte a su red. Inténtalo y trata de nuevo.",
+                            (dialog, which) -> {
+                                System.exit(0);
+                            }, (dialog, which) -> {
+                                System.exit(0);
+                            });
                 }
-                logoOut();
             }
 
             @Override
