@@ -1,7 +1,10 @@
 package co.com.millennialapps.owlmapp.fragments;
 
 import android.app.Activity;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +18,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -38,7 +45,9 @@ import co.com.millennialapps.utils.firebase.FFirestoreManager;
 import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.millennialapps.utils.tools.MapHandler;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback,
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks {
 
     private MapHandler mapHandler;
     private AutoCompleteTextView edtOrigin;
@@ -55,6 +64,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Marker markerPosB;
     private Node nodeFrom;
     private Node nodeTo;
+    private GoogleApiClient mGoogleApiClient;
+    private SupportMapFragment fragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,13 +77,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         ibtClearDestination = view.findViewById(R.id.ibtClearDestination);
         //fabMapType = view.findViewById(R.id.fabMapType);
 
-        SupportMapFragment fragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        fragment.getMapAsync(this);
+        fragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
         LinkedList<Building> buildings = new LinkedList<>();
+        Building building;
         for (Node node : Shared.nodes.values()) {
             if (!node.getType().equals("Camino")) {
-                Building building = new Building();
+                building = new Building();
                 building.setId(node.getId());
                 building.setDescription(node.getDescription());
                 building.setLatitude(node.getLatitude());
@@ -87,15 +98,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         for (Building b : buildings) {
-            sNomPlaces.put(b.getId(), b.getNumber() + " " + b.getName());
+            if (b.getNumber() != null) {
+                sNomPlaces.put(b.getId(), b.getNumber() + " " + b.getName());
+            } else {
+                sNomPlaces.put(b.getId(), b.getName());
+            }
         }
         List<String> names = new ArrayList<>(sNomPlaces.values());
         Collections.sort(names);
-        ArrayAdapter<String> adapterPlaces = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()]));
 
-        edtOrigin.setAdapter(adapterPlaces);
-        edtDestination.setAdapter(adapterPlaces);
+        edtDestination.setAdapter(new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()])));
+        names.add(0, "Tu ubicación");
+        edtOrigin.setAdapter(new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()])));
 
         ibtClearOrigin.setOnClickListener(v -> {
             edtOrigin.setText("");
@@ -119,7 +135,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         edtOrigin.setThreshold(1);
         edtOrigin.setOnItemClickListener((parent, myView, position, id) -> {
             String sPlace = (String) parent.getItemAtPosition(position);
-            nodeFrom = getNode(sPlace);
+            if (sPlace.equals("Tu ubicación")) {
+                nodeFrom = Dijkstra.getInstance(mapHandler).getCloserNodeFromMyLocation(mapHandler, Shared.nodes);
+            } else {
+                nodeFrom = getNode(sPlace);
+            }
             markerPosA = setMarker(markerPosA, nodeFrom, true, sPlace);
             sendRequest();
             hideSoftKeyBoard();
@@ -175,6 +195,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity(), this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+        mGoogleApiClient.connect();
+
         setHasOptionsMenu(true);
         return view;
     }
@@ -186,6 +215,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         mapHandler.changeMapType(MapHandler.MAP_SATELLITE);
+        mapHandler.enableAutoLocation(getActivity(), mGoogleApiClient, MapHandler.VIEW_LOCATION);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        //googleMap.getUiSettings().setZoomGesturesEnabled(false);
+        googleMap.getUiSettings().setTiltGesturesEnabled(false);
+        googleMap.setOnMyLocationChangeListener(location -> {
+            //TODO
+        });
 
         mapHandler.zoomTo(15.5f, new LatLng(4.637529, -74.083992), false);
 
@@ -195,6 +231,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     Toast.LENGTH_LONG).show();
             return false;
         }, null, null);
+
+        if (mapHandler.distance(mapHandler.getMyLocation(), new LatLng(4.637529, -74.083992), MapHandler.METERS) > 600) {
+            DialogManager.showMessageDialog(getActivity(), R.string.warning, "Ups, parece que estás muy lejos de la universidad como para darte una ruta desde tu ubicación actual. Pero aun puedes mirar rutas entre edificios y lugares de la U. ¡Inténtalo!");
+        } else {
+            nodeFrom = Dijkstra.getInstance(mapHandler).getCloserNodeFromMyLocation(mapHandler, Shared.nodes);
+            edtOrigin.setText("Tu ubicación");
+            edtOrigin.clearFocus();
+        }
     }
 
     public Node getNode(String sPlace) {
@@ -237,5 +281,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapHandler.zoomToMarkers();
         Dijkstra.getInstance(mapHandler).findShortestPath(Shared.nodes, nodeFrom, nodeTo);
         Dijkstra.getInstance(mapHandler).paintPath(getActivity(), nodeFrom, nodeTo);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        fragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

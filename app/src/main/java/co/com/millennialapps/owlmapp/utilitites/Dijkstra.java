@@ -129,7 +129,7 @@ public class Dijkstra {
             childNode = this.nodeList.get(parent);
         } while (!parent.isEmpty());
 
-        generateInstructions();
+        //generateInstructions();
     }
 
     private void generateInstructions() {
@@ -274,7 +274,7 @@ public class Dijkstra {
         mapHandler.zoomTo(true, latLngs);
     }
 
-    private Node getCloserNode(MapHandler mapHandler, Node node) {
+    public Node getCloserNode(MapHandler mapHandler, Node node) {
         float shortestDistance = Float.MAX_VALUE;
         float distance = 0;
         Node closerNode = null;
@@ -291,6 +291,23 @@ public class Dijkstra {
         }
         return closerNode;
     }
+
+    public Node getCloserNodeFromMyLocation(MapHandler mapHandler, HashMap<String, Node> nodeList) {
+        float shortestDistance = Float.MAX_VALUE;
+        float distance = 0;
+        Node closerNode = null;
+        if (!nodeList.isEmpty()) {
+            for (Node entry : nodeList.values()) {
+                distance = mapHandler.distance(mapHandler.getMyLocation(), entry.getLatLng(), MapHandler.METERS);
+                if (distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closerNode = entry;
+                }
+            }
+        }
+        return closerNode;
+    }
+
 
     public LinkedList<Node> getShortestPath() {
         return shortestPath;
