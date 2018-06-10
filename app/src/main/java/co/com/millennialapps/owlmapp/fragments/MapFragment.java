@@ -33,6 +33,7 @@ import co.com.millennialapps.owlmapp.R;
 import co.com.millennialapps.owlmapp.models.Building;
 import co.com.millennialapps.owlmapp.models.Node;
 import co.com.millennialapps.owlmapp.utilitites.Dijkstra;
+import co.com.millennialapps.owlmapp.utilitites.Shared;
 import co.com.millennialapps.utils.firebase.FFirestoreManager;
 import co.com.millennialapps.utils.tools.DialogManager;
 import co.com.millennialapps.utils.tools.MapHandler;
@@ -48,7 +49,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     //Lists about Places
     private HashMap<String, String> sNomPlaces = new HashMap<>();
-    private HashMap<String, Node> nodes = new HashMap<>();
 
     //Properties of position A and position B
     private Marker markerPosA;
@@ -69,44 +69,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment fragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         fragment.getMapAsync(this);
 
-        FFirestoreManager.getInstance().get(getActivity(), "Nodes",
-                task -> {
-                    LinkedList<Building> buildings = new LinkedList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Node node = document.toObject(Node.class);
-                        node.setId(document.getId());
-                        nodes.put(document.getId(), node);
-                        if (!node.getType().equals("Camino")) {
-                            Building building = new Building();
-                            building.setId(node.getId());
-                            building.setDescription(node.getDescription());
-                            building.setLatitude(node.getLatitude());
-                            building.setLongitude(node.getLongitude());
-                            building.setName(node.getName());
-                            building.setNumber(node.getNumber());
-                            building.setEmail(node.getEmail());
-                            building.setPhone(node.getPhone());
-                            building.setWebPage(node.getWebPage());
-                            buildings.add(building);
-                        }
-                    }
+        LinkedList<Building> buildings = new LinkedList<>();
+        for (Node node : Shared.nodes.values()) {
+            if (!node.getType().equals("Camino")) {
+                Building building = new Building();
+                building.setId(node.getId());
+                building.setDescription(node.getDescription());
+                building.setLatitude(node.getLatitude());
+                building.setLongitude(node.getLongitude());
+                building.setName(node.getName());
+                building.setNumber(node.getNumber());
+                building.setEmail(node.getEmail());
+                building.setPhone(node.getPhone());
+                building.setWebPage(node.getWebPage());
+                buildings.add(building);
+            }
+        }
 
-                    for (Building b : buildings) {
-                        sNomPlaces.put(b.getId(), b.getNumber() + " " + b.getName());
-                    }
-                    List<String> names = new ArrayList<>(sNomPlaces.values());
-                    Collections.sort(names);
-                    ArrayAdapter<String> adapterPlaces = new ArrayAdapter<>(getActivity(),
-                            android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()]));
+        for (Building b : buildings) {
+            sNomPlaces.put(b.getId(), b.getNumber() + " " + b.getName());
+        }
+        List<String> names = new ArrayList<>(sNomPlaces.values());
+        Collections.sort(names);
+        ArrayAdapter<String> adapterPlaces = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()]));
 
-                    edtOrigin.setAdapter(adapterPlaces);
-                    edtDestination.setAdapter(adapterPlaces);
-                });
+        edtOrigin.setAdapter(adapterPlaces);
+        edtDestination.setAdapter(adapterPlaces);
 
         ibtClearOrigin.setOnClickListener(v -> {
             edtOrigin.setText("");
             nodeFrom = null;
-            if(markerPosA != null) {
+            if (markerPosA != null) {
                 markerPosA.remove();
                 markerPosA = null;
             }
@@ -115,7 +109,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         ibtClearDestination.setOnClickListener(v -> {
             edtDestination.setText("");
             nodeTo = null;
-            if(markerPosB != null) {
+            if (markerPosB != null) {
                 markerPosB.remove();
                 markerPosB = null;
             }
@@ -206,7 +200,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public Node getNode(String sPlace) {
         for (Map.Entry<String, String> value : sNomPlaces.entrySet()) {
             if (value.getValue().equals(sPlace)) {
-                return nodes.get(value.getKey());
+                return Shared.nodes.get(value.getKey());
             }
         }
         return null;
@@ -241,7 +235,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mapHandler.clearPolylines();
         mapHandler.zoomToMarkers();
-        Dijkstra.getInstance(mapHandler).findShortestPath(nodes, nodeFrom, nodeTo);
+        Dijkstra.getInstance(mapHandler).findShortestPath(Shared.nodes, nodeFrom, nodeTo);
         Dijkstra.getInstance(mapHandler).paintPath(getActivity(), nodeFrom, nodeTo);
     }
 }

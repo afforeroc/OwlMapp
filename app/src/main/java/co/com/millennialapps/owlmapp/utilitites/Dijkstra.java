@@ -80,20 +80,19 @@ public class Dijkstra {
 
             //Usa el nodo con la menor distancia
             if (currentNode != null) {
-                if(currentNode.getId().equals("0hSaGlCJ5MQaq4ANN7iw")){
+                if (currentNode.getId().equals("0hSaGlCJ5MQaq4ANN7iw")) {
                     int a = 1;
                 }
                 //Mira si ese nodo tiene enlaces con otros nodos
                 if (currentNode.getLinks() != null) {
                     //Recorre todos los enlaces a los que tenga acceso y calcula sus distancias
                     for (String link : currentNode.getLinks()) {
-                        if(link.equals("0hSaGlCJ5MQaq4ANN7iw")){
+                        if (link.equals("0hSaGlCJ5MQaq4ANN7iw")) {
                             int a = 1;
                         }
                         nodeLink = nodes.get(link);
                         if (nodeLink != null) {
-                            if (nodeLink.getType().equals("Camino") || nodeLink.getType().equals("Edificio")
-                                    || nodeLink.getId().equals(to.getId())) {
+                            if (!nodeLink.getType().equals("") || nodeLink.getId().equals(to.getId())) {
                                 //Calcula la distancia del nodo actual a cada uno de los enlaces que tenga
                                 d = mapHandler.distance(currentNode.getLatLng(), nodeLink.getLatLng(), MapHandler.METERS);
                                 //Revisa si la distancia desde el inicio hasta ahí es menor por este enlace que por algún otro camino visto

@@ -24,6 +24,7 @@ import co.com.millennialapps.owlmapp.activities.MainActivity;
 import co.com.millennialapps.owlmapp.adapters.RclBuildingsAdapter;
 import co.com.millennialapps.owlmapp.models.Building;
 import co.com.millennialapps.owlmapp.models.Node;
+import co.com.millennialapps.owlmapp.utilitites.Shared;
 import co.com.millennialapps.utils.firebase.FFirestoreManager;
 import co.com.millennialapps.utils.tools.Preferences;
 import co.com.millennialapps.utils.tools.SearchBarHandler;
@@ -50,29 +51,25 @@ public class BuildingsFragment extends Fragment {
                     getActivity().startActivity(i);
                 });
 
-        FFirestoreManager.getInstance().get(getActivity(), "Nodes", task -> {
-            for (QueryDocumentSnapshot document : task.getResult()) {
-                Node node = document.toObject(Node.class);
-                node.setId(document.getId());
-                if (!node.getType().equals("Camino")) {
-                    Building building = new Building();
-                    building.setId(node.getId());
-                    building.setDescription(node.getDescription());
-                    building.setLatitude(node.getLatitude());
-                    building.setLongitude(node.getLongitude());
-                    building.setName(node.getName());
-                    building.setNumber(node.getNumber());
-                    building.setEmail(node.getEmail());
-                    building.setPhone(node.getPhone());
-                    building.setWebPage(node.getWebPage());
-                    buildings.add(building);
-                }
+        for (Node node : Shared.nodes.values()) {
+            if (!node.getType().equals("Camino")) {
+                Building building = new Building();
+                building.setId(node.getId());
+                building.setDescription(node.getDescription());
+                building.setLatitude(node.getLatitude());
+                building.setLongitude(node.getLongitude());
+                building.setName(node.getName());
+                building.setNumber(node.getNumber());
+                building.setEmail(node.getEmail());
+                building.setPhone(node.getPhone());
+                building.setWebPage(node.getWebPage());
+                buildings.add(building);
             }
+        }
 
-            Collections.sort(buildings, (o1, o2) -> o1.getNumber().compareTo(o2.getNumber()));
+        Collections.sort(buildings, (o1, o2) -> o1.getNumber().compareTo(o2.getNumber()));
 
-            adapter.setBuildings(buildings);
-        });
+        adapter.setBuildings(buildings);
         RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rclBuildings.setLayoutManager(mLayoutManager);
         rclBuildings.setAdapter(adapter);

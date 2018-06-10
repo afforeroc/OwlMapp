@@ -1,5 +1,6 @@
 package co.com.millennialapps.owlmapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -60,8 +61,7 @@ public class BuildDetailActivity extends BaseActivity implements OnStreetViewPan
         } else {
             ((TextView) findViewById(R.id.txtWebPage)).setText(building.getWebPage());
         }
-/*        ((TextView) findViewById(R.id.txtState)).setText(building.getState() + " - " + building.getCity());
-        ((TextView) findViewById(R.id.txtAddress)).setText(building.getAddress());*/
+
 
         StreetViewPanoramaFragment streetViewPanoramaFragment =
                 (StreetViewPanoramaFragment) getFragmentManager()
