@@ -26,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import co.com.millennialapps.owlmapp.R;
+import co.com.millennialapps.owlmapp.adapters.EdtStringAdapter;
 import co.com.millennialapps.owlmapp.models.Building;
 import co.com.millennialapps.owlmapp.models.Node;
 import co.com.millennialapps.owlmapp.utilitites.Dijkstra;
@@ -103,10 +105,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         List<String> names = new ArrayList<>(sNomPlaces.values());
         Collections.sort(names);
 
-        edtDestination.setAdapter(new ArrayAdapter<>(getActivity(),
+        edtDestination.setAdapter(new EdtStringAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()])));
         names.add(0, "Tu ubicación");
-        edtOrigin.setAdapter(new ArrayAdapter<>(getActivity(),
+        edtOrigin.setAdapter(new EdtStringAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, names.toArray(new String[sNomPlaces.size()])));
 
         ibtClearOrigin.setOnClickListener(v -> {
@@ -140,9 +142,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             if (nodeFrom != null) {
                 markerPosA = setMarker(markerPosA, nodeFrom, true, sPlace);
                 sendRequest();
-                hideSoftKeyBoard();
                 edtOrigin.setText(sPlace);
             }
+            hideSoftKeyBoard();
         });
         edtOrigin.addTextChangedListener(new TextWatcher() {
             @Override
